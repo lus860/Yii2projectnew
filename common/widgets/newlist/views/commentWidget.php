@@ -72,7 +72,7 @@ use yii\widgets\ActiveForm;
 
     <!-- Section Title -->
     <div class="section-heading style-2">
-        <h4>Leavee a reply</h4>
+        <h4>Leave a reply</h4>
         <div class="line"></div>
     </div>
 
