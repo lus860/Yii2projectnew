@@ -6,32 +6,38 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use yii\helpers\Url;
+use yii\helpers\Html;
 
 /**
  * User model
  *
  * @property integer $id
- * @property string $username
+ * @property string $surname
+ * @property string $name
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $verification_token
  * @property string $email
  * @property string $auth_key
  * @property integer $status
+ * @property integer $role
  * @property integer $created_at
  * @property integer $updated_at
- * @property string $password write-only password
+ * @property string $password
  */
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
+    const ROLE_USER = 0;
+    const ROLE_ADMIN = 1;
+    const IS_ADMIN = ['user','admin'];
+    const IS_ACTIVE = ['inactive','active'];
 
 
-    /**
-     * {@inheritdoc}
-     */
+
     public static function tableName()
     {
         return '{{%user}}';
@@ -43,7 +49,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+
+            ],
         ];
     }
 
@@ -54,10 +67,71 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
+            ['role', 'default', 'value' => self::ROLE_USER],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            [['email'], 'required'],
+            [['email'], 'trim'],
+            [['email'], 'email'],
+            [['email',], 'unique', 'message' => 'This "{attribute}" is already registered'],
+            [['surname',  'email','name','auth_key'], 'string', 'max' => 255],
+            [[ 'created_at', 'updated_at'], 'integer']
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'auth_key' => 'Auth Key',
+            'password_hash' => 'Password',
+            'email' => 'Email',
+            'status' => 'Status',
+            'created_at' => 'Created',
+            'password' => 'New password',
+            'passwordRepeat' => 'Repeat new password',
+            'name' => 'Name',
+            'surname' => 'Surname',
+        ];
+    }
+
+
+    public function getRoleName()
+    {
+        $list = self::IS_ADMIN;
+        return $list[$this->role];
+    }
+
+    public function getStatusName()
+    {
+        $list=[];
+        $list[self::STATUS_INACTIVE] = self::IS_ACTIVE[0];
+        $list[self::STATUS_ACTIVE] = self::IS_ACTIVE[1];
+        return $list[$this->status];
+
+    }
+
+    public function resetPassword()
+    {
+        if ($this->validate()) {
+            $this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+
+            return $this->save();
+
+        }
+
+        return false;
+    }
+
+    public static function findByEmail($email)
+    {
+        return self::find()->where(['email' => $email])->one();
+    }
+
+
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
     /**
      * {@inheritdoc}
      */
@@ -74,16 +148,6 @@ class User extends ActiveRecord implements IdentityInterface
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
 
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
-    {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
-    }
 
     /**
      * Finds user by password reset token
@@ -157,22 +221,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->getAuthKey() === $authKey;
     }
 
-    /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
-     */
-    public function validatePassword($password)
-    {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
-    }
 
-    /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     */
     public function setPassword($password)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
@@ -209,4 +258,65 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+    public static function findByAuthKey($auth_key)
+    {
+        return self::find()->where(['auth_key' => $auth_key])->one();
+    }
+
+
+    public static function userConfirmed()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return (Yii::$app->user->identity->status == 10) ? true : false;
+        }
+
+        return false;
+    }
+
+    public static function isAdmin($auth_key)
+    {
+        $admin = self::find()->where(['and', ['auth_key'=> $auth_key], ['role' => self::ROLE_ADMIN]])->one();
+        if($admin){
+            return true;
+        }
+        return false;
+    }
+
+    public static function Logout()
+    {
+        Yii::$app->user->logout();
+
+    }
+
+    public static function LoginAdmin($id)
+    {
+        Yii::$app->urlManager->baseUrl = '/';
+
+        $authKey = Yii::$app->user->identity->authKey;
+        User::Logout();
+        //Yii::$app->user->logout();
+        $user = User::findOne($id);
+        Yii::$app->user->login($user, 3600 * 24 * 30);
+
+        if (User::userConfirmed()) {
+            $authCookie = new \yii\web\Cookie
+            ([
+                'name' => 'from_admin',
+                'value' => $authKey,
+                'expire' => time() + 86400 * 365,
+            ]);
+
+            Yii::$app->getResponse()->getCookies()->add($authCookie);
+            return Yii::$app->controller->redirect(['/newlist/']);
+        } else {
+            return Yii::$app->controller->redirect(Yii::$app->request->referrer ?? Yii::$app->homeUrl);
+        }
+    }
+
+    public function getDate($date)
+    {
+        return Yii::$app->formatter->asDate($date);
+    }
+
 }

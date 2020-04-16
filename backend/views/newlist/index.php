@@ -1,8 +1,11 @@
 <?php
 
+
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
+
+
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -18,37 +21,67 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Newlist', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            [
-            'attribute'=>'category_id',
-            //'format' => 'html',
+            ['label' => 'Category',
+            'attribute'=>'category',
+            'format' => 'ntext',
             'value' => function( $data ){
-               return $data->categoryName;
+                return $data->getCategories()->one()->name;
            },
            ],
             'title',
-            'content:html',
             [
-            'attribute'=>'img',
+                'attribute'=>'Content',
+                'format' => 'html',
+                'value' => function($data){
+                    return $data->getShortText($data->content);
+                },
+            ],
+            [
+            'attribute'=>'image',
              'format' => 'raw',
-             'value' => function($data) {
-             return Html::img(Url::to('/frontend/web/img/bg-img/'.$data->img) , ['style' => 'width:40px;']);
-             },
+             'value' => function($data){
+                 return $data->getImg($data->id);
+                 },
              ],
-            'video',
-            //'likes_count',
-            //'views_count',
-            //'created_at',
+            [
+                'attribute'=>'video',
+                'format' => 'raw',
+                'value' => function($data){
+                    if($data->video){
+                        return Html::a('Video', $data->video, ['target'=>"_blank"]);
 
+                    } else {
+                        return "No video";
+                    }
+
+                },
+            ],
+            'video_time',
+            'likes_count',
+            'views_count',
+            [
+                'attribute'=>'created_at',
+                'format' => 'ntext',
+                'value' => function($data){
+                    return $data->getDate($data->created_at);
+                },
+            ],
+
+            [
+                'attribute'=>'updated_at',
+                'format' => 'ntext',
+                'value' => function($data){
+                    return $data->getDate($data->updated_at);
+                },
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-
 
 </div>

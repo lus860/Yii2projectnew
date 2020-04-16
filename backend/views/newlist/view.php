@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model backend\models\Newlist */
 
@@ -30,14 +30,48 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'category_id',
-            'title:ntext',
-            'content:ntext',
-            'img',
-            'video',
+            [
+                'attribute'=>'category_id',
+                //'format' => 'html',
+                'value' => function( $data ){
+                    return $data->getCategories()->one()->name;
+                },
+            ],
+            'title:html',
+            'content:html',
+            [
+                'attribute'=>'image',
+                'format' => 'raw',
+             'value' => function($data){
+                 return $data->getImg($data->id);
+             },
+            ],
+            [
+                'attribute'=>'video',
+                'format' => 'raw',
+                'value' => function($data){
+                    return Html::a('Video', $data->video, ['target'=>"_blank"]);
+
+                },
+            ],
+            'video_time',
             'likes_count',
             'views_count',
-            'created_at',
+            [
+                'attribute'=>'created_at',
+                'format' => 'ntext',
+                'value' => function($data){
+                    return $data->getDate($data->created_at);
+                },
+            ],
+
+            [
+                'attribute'=>'updated_at',
+                'format' => 'ntext',
+                'value' => function($data){
+                    return $data->getDate($data->updated_at);
+                },
+            ],
         ],
     ]) ?>
 

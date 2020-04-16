@@ -3,16 +3,23 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
+use common\models\User;
 use yii\bootstrap\NavBar;
+use common\widgets\Alert;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\VizewAsset;
-use common\widgets\Alert;
+use common\widgets\newlist\FooterWidget;
 use common\widgets\newlist\BreakingNews;
+use common\widgets\newlist\FeaturesWidget;
+use common\widgets\newlist\SearchWidget;
 
 VizewAsset::register($this);
+
 ?>
+
 <?php $this->beginPage() ?>
     <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -24,27 +31,12 @@ VizewAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-
-    <!-- Title -->
-    <!--<title>Vizew - Blog &amp; Magazine HTML Template</title>-->
-
-    <!-- Favicon -->
-    <link rel="icon" href="/img/core-img/favicon.ico">
+    <link rel="icon" href="/images/news/core-img/favicon.ico">
 
     <!-- Stylesheet -->
 </head>
 <body>
 <?php $this->beginBody() ?>
-<div class="preloader d-flex align-items-center justify-content-center">
-    <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-
 <!-- ##### Header Area Start ##### -->
 <header class="header-area">
     <!-- Top Header Area -->
@@ -54,30 +46,34 @@ VizewAsset::register($this);
                 <div class="col-12 col-md-6">
                     <!-- Breaking News Widget -->
 
-
                     <?php echo BreakingNews::widget(); ?>
 
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="top-meta-data d-flex align-items-center justify-content-end">
-                        <!-- Top Social Info -->
+
                         <div class="top-social-info">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-pinterest"></i></a>
-                            <a href="#"><i class="fa fa-linkedin"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
+
+                            <?php if (!Yii::$app->user->isGuest && User::isAdmin(Yii::$app->user->identity->auth_key)) {?>
+                            <?= Html::a("Admin", [Url::to(['admin/site/index','auth_key' =>Yii::$app->user->identity->auth_key])], ['class' => 'login-btn']) ?>
+                             <?php } ?>
+
                         </div>
                         <!-- Top Search Area -->
                         <div class="top-search-area">
-                            <form action="index.html" method="post">
-                                <input type="search" name="top-search" id="topSearch" placeholder="Search...">
-                                <button type="submit" class="btn"><i class="fa fa-search" aria-hidden="true"></i></button>
-                            </form>
+                            <?php echo SearchWidget::widget(); ?>
+
                         </div>
                         <!-- Login -->
-                        <a href="/newlist/login" class="login-btn"><i class="fa fa-user" aria-hidden="true"></i></a>
-                    </div>
+                        <?php if (Yii::$app->user->isGuest) {?>
+                            <?= Html::a("Sign In", [Url::to(['user/signin/'])], ['class' => 'login-btn']) ?>
+                            <?= Html::a("Sign Up", [Url::to(['user/signup/'])], ['class' => 'login-btn']) ?>
+                        <?php } else {?>
+                            <?= Html::a("Logout", [Url::to(['user/logout/'])], ['class' => 'login-btn']) ?>
+                            <?= Html::a( '('.Yii::$app->user->identity->name . ')',['/user/logout' ], ['class' => 'login-btn']) ?>
+                        <?php }?>
+
+                   </div>
                 </div>
             </div>
         </div>
@@ -87,59 +83,49 @@ VizewAsset::register($this);
     <div class="vizew-main-menu" id="sticker">
         <div class="classy-nav-container breakpoint-off">
             <div class="container">
-
                 <!-- Menu -->
                 <nav class="classy-navbar justify-content-between" id="vizewNav">
-
                     <!-- Nav brand -->
-                    <a href="/" class="nav-brand"><img src="/img/core-img/logo.png" alt=""></a>
-
+                    <a href="/" class="nav-brand"><img src="/images/news/core-img/logo.png" alt=""></a>
                     <!-- Navbar Toggler -->
                     <div class="classy-navbar-toggler">
-                        <span class="navbarToggler"><span></span><span></span><span></span></span>
+                        <span class="navbarToggler">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
                     </div>
 
                     <div class="classy-menu">
 
                         <!-- Close Button -->
                         <div class="classycloseIcon">
-                            <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            <div class="cross-wrap">
+                                <span class="top"></span>
+                                <span class="bottom"></span>
+                            </div>
                         </div>
 
                         <!-- Nav Start -->
                         <div class="classynav">
                             <ul>
-                                <li class="active"><a href="index.html">Home</a></li>
-                                <li><a href="archive-list.html">Archives</a></li>
+                                <li class="active"><a href="/">Home</a></li>
+                                <li><a href="/newlist/list">Archives</a></li>
                                 <li><a href="#">Pages</a>
                                     <ul class="dropdown">
                                         <li><a href="/">- Home</a></li>
                                         <li><a href="/newlist/list">- Archive List</a></li>
                                         <li><a href="/newlist/grid">- Archive Grid</a></li>
-                                        <li><a href="single-post.html">- Single Post</a></li>
-                                        <li><a href="video-post.html">- Single Video Post</a></li>
+                                        <li><a href="/newlist/favorite">- Favorite List</a></li>
                                         <li><a href="/newlist/contact">- Contact</a></li>
-                                        <li><a href="/newlist/typography">- Typography</a></li>
                                         <li><a href="/newlist/login">- Login</a></li>
                                     </ul>
                                 </li>
                                 <li><a href="#">Features</a>
-                                    <div class="megamenu">
-                                        <?php for($i=0;$i<4;$i++):?>
-                                        <ul class="single-mega cn-col-4">
-                                            <li><a href="/">- Home</a></li>
-                                            <li><a href="/newlist/list">- Archive List</a></li>
-                                            <li><a href="/newlist/grid">- Archive Grid</a></li>
-                                            <li><a href="single-post.html">- Single Post</a></li>
-                                            <li><a href="video-post.html">- Single Video Post</a></li>
-                                            <li><a href="/newlist/contact">- Contact</a></li>
-                                            <li><a href="/newlist/typography">- Typography</a></li>
-                                            <li><a href="/newlist/login">- Login</a></li>
-                                        </ul>
-                                      <?php endfor;?>
-                                    </div>
+                                    <?php echo FeaturesWidget::widget(); ?>
+
                                 </li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="/newlist/contact">Contact</a></li>
                             </ul>
                         </div>
                         <!-- Nav End -->
@@ -149,6 +135,39 @@ VizewAsset::register($this);
         </div>
     </div>
 </header>
+<?php if(Yii::$app->session->getFlash('isguest')):?>
+    <div class="alert alert-danger" role="alert">
+        <?= Yii::$app->session->getFlash('isguest'); ?>
+    </div>
+<?php endif;?>
+<div class="vizew-breadcrumb">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <?php if ($this->title == 'Video Post' || $this->title == 'Single Post') {?>
+                            <li class="breadcrumb-item"><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Archive</a></li>
+                            <?php if(isset($title)) {?>
+                                <li class="breadcrumb-item active" aria-current="page"><?=$title?></li>
+                            <?php } ?>
+                        <?php } elseif ($this->title == 'Archive List' || $this->title == 'Archive Grid') {?>
+                            <li class="breadcrumb-item"><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Feature</a></li>
+                            <?php if(Yii::$app->request->get('category')) {?>
+                                <li class="breadcrumb-item active" aria-current="page">Archive by Category <?=mb_strtoupper(Yii::$app->request->get('category'))?></li>
+                            <?php }?>
+                            <?php } elseif($this->title == 'Sign In' || $this->title == 'Sign Up' || $this->title == 'Contact'){?>
+                            <li class="breadcrumb-item"><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+                            <li class="breadcrumb-item"><a href="#"><?=$this->title?></a></li>
+                        <?php } ?>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
 <?= $content ?>
     <footer class="footer-area">
         <div class="container">
@@ -157,15 +176,17 @@ VizewAsset::register($this);
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="footer-widget mb-70">
                         <!-- Logo -->
-                        <a href="index.html" class="foo-logo d-block mb-4"><img src="/img/core-img/logo2.png" alt=""></a>
+                        <a href="/" class="foo-logo d-block mb-4"><img src="/images/news/core-img/logo2.png" alt=""></a>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+
                         <!-- Footer Newsletter Area -->
-                        <div class="footer-nl-area">
-                            <form action="#" method="post">
-                                <input type="email" name="nl-email" class="form-control" id="nlEmail" placeholder="Your email">
-                                <button type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-                            </form>
-                        </div>
+<!--                        <div class="footer-nl-area">-->
+<!--                            <form action="#" method="post">-->
+<!--                                <input type="email" name="nl-email" class="form-control" id="nlEmail" placeholder="Your email">-->
+<!--                                <button type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>-->
+<!--                            </form>-->
+<!--                        </div>-->
                     </div>
                 </div>
 
@@ -204,44 +225,7 @@ VizewAsset::register($this);
                     </div>
                 </div>
 
-                <!-- Footer Widget Area -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="footer-widget mb-70">
-                        <h6 class="widget-title">Sport Videos</h6>
-
-                        <!-- Single Blog Post -->
-                        <div class="single-blog-post d-flex">
-                            <div class="post-thumbnail">
-                                <img src="/img/bg-img/1.jpg" alt="">
-                            </div>
-                            <div class="post-content">
-                                <a href="single-post.html" class="post-title">DC Shoes: gymkhana the</a>
-                                <div class="post-meta d-flex justify-content-between">
-                                    <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 14</a>
-                                    <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 34</a>
-                                    <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 84</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Single Blog Post -->
-                        <div class="single-blog-post d-flex">
-                            <div class="post-thumbnail">
-                                <img src="/img/bg-img/2.jpg" alt="">
-                            </div>
-                            <div class="post-content">
-                                <a href="single-post.html" class="post-title">Sweet Yummy Chocolatea Tea</a>
-                                <div class="post-meta d-flex justify-content-between">
-                                    <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 14</a>
-                                    <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 34</a>
-                                    <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 84</a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
+                <?php echo FooterWidget::widget(); ?>
                 <!-- Footer Widget Area -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="footer-widget mb-70">

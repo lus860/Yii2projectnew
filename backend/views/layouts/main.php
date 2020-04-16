@@ -3,12 +3,14 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use yii\helpers\Url;
 use backend\assets\AppAsset;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use common\widgets\Alert;
+
 
 AppAsset::register($this);
 ?>
@@ -36,18 +38,22 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
-    $menuItems = [
+        ['label' => 'Home', 'url' => ['/']],
+        ['label' => 'Users', 'url' => ['/user/index']],
         ['label' => 'Newlist', 'url' => ['/newlist/index']],
+        ['label' => 'Categories', 'url' => ['/category/index']],
+        ['label' => 'Comments', 'url' => ['/comment/index']],
+        ['label' => 'Newsletteres', 'url' => ['/newsletteres/index']],
+
     ];
+
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                'Logout (' . Yii::$app->user->identity->name . ')',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()

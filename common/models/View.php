@@ -10,7 +10,6 @@ use Yii;
  * @property int $id
  * @property int $new_id
  * @property int $user_id
- * @property string $views
  */
 class View extends \yii\db\ActiveRecord
 {
@@ -30,7 +29,6 @@ class View extends \yii\db\ActiveRecord
         return [
             [['new_id', 'user_id'], 'required'],
             [['new_id', 'user_id'], 'integer'],
-            [['views'], 'string'],
         ];
     }
 
@@ -43,7 +41,6 @@ class View extends \yii\db\ActiveRecord
             'id' => 'ID',
             'new_id' => 'New ID',
             'user_id' => 'User ID',
-            'views' => 'Views',
         ];
     }
 

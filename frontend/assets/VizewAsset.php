@@ -13,6 +13,15 @@ class VizewAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/style.css',
+        'css/site.css',
+        //'css/bootstrap.min.css',
+        'css/classy-nav.css',
+        'css/font-awesome.min.css',
+        'css/themify-icons.css',
+        'css/owl.carousel.min.css',
+        'css/animate.css',
+        'css/magnific-popup.css'
+
     ];
     public $js = [
         'js/jquery/jquery-2.2.4.min.js',
@@ -23,6 +32,6 @@ class VizewAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
+        //'yii\bootstrap\BootstrapAsset',
     ];
 }

@@ -121,4 +121,78 @@
         new WOW().init();
     }
 
+
 })(jQuery);
+$(document).ready(function(){
+    $('.like').on('click', function() {
+        var newid = $(this).data('id');
+        $(this).attr('id', 'clicked');
+        $.ajax({
+            url: '/newlist/like',
+            type: 'GET',
+            dataType: "json",
+            data: {'newid': newid},
+            error: function (data) {
+                console.log(data);
+            },
+            success: function(res){
+                if($('#clicked').hasClass('fa fa-thumbs-o-up')){
+                    $('#clicked').removeClass('fa fa-thumbs-o-up').addClass('fa fa-thumbs-up');
+                    $('#clicked').text(parseInt( $('#clicked').text() ) + 1);
+                } else if(!$('#clicked').hasClass('fa fa-thumbs-o-up')){
+                    $('#clicked').removeClass('fa fa-thumbs-up').addClass('fa fa-thumbs-o-up');
+                    $('#clicked').text(parseInt( $('#clicked').text() ) - 1);
+
+                }
+                $('#clicked').removeAttr('id');
+
+            }
+        });
+    });
+});
+
+$(document).ready(function(){
+    $('.star').on('click', function() {
+        var newid = $(this).data('id');
+        $(this).attr('id', 'favorite');
+        $.ajax({
+            url: '/newlist/set-favorite',
+            type: 'GET',
+            dataType: "json",
+            data: {'newid': newid},
+            error: function (data) {
+                console.log(data);
+            },
+            success: function(res){
+                if($('#favorite').hasClass('fa fa-star-o')){
+                    $('#favorite').removeClass('fa fa-star-o').addClass('fa fa-star');
+                } else if(!$('#favorite').hasClass('fa fa-star-o')){
+                    $('#favorite').removeClass('fa fa-star').addClass('fa fa-star-o');
+                }
+                $('#favorite').removeAttr('id');
+
+            }
+        });
+    });
+});
+
+$(document).ready(function(){
+    $('.reply').on('click', function() {
+        var parent = $(this).data('id');
+        var parentreal = $(this).data('parent');
+        $('.parent_id').val(parent);
+        $('.parentreal_id').val(parentreal);
+        console.log($('.parentreal_id').val());
+
+    });
+});
+
+$(document).ready(function(){
+    $('.subscribe-btn').on('click', function() {
+        var id  = $(this).data('id');
+        $('#categoriesid').val(id);
+        console.log($('#categoriesid').val());
+
+    });
+});
+

@@ -2,10 +2,12 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\User;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use backend\controllers\behaviors\AccessBehavior;
 
 /**
  * Site controller
@@ -18,6 +20,7 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
+            //AccessBehavior::className(),
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
@@ -35,7 +38,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['post','get'],
                 ],
             ],
         ];
@@ -60,6 +63,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $authkey = Yii::$app->request->get();
+        $user = User::findByAuthKey($authkey);
+        if ( $authkey == null || $user == null ) {
+            Yii::$app->urlManager->baseUrl = '/';
+            return Yii::$app->controller->redirect(['/newlist/index']);
+        }
         return $this->render('index');
     }
 
@@ -75,8 +84,14 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post()) ) {
+            $user = User::findByEmail($model->email);
+            if($user->role == User::ROLE_ADMIN && $model->login()){
+                return $this->render('index');
+            } else {
+                Yii::$app->urlManager->baseUrl = '/';
+                return Yii::$app->controller->redirect(['/newlist/index']);
+            }
         } else {
             $model->password = '';
 

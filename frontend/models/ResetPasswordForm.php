@@ -1,64 +1,40 @@
 <?php
+
 namespace frontend\models;
 
-use yii\base\InvalidArgumentException;
+use Yii;
 use yii\base\Model;
-use common\models\User;
 
-/**
- * Password reset form
- */
 class ResetPasswordForm extends Model
 {
     public $password;
+    public $passwordRepeat;
 
-    /**
-     * @var \common\models\User
-     */
-    private $_user;
-
-
-    /**
-     * Creates a form model given a token.
-     *
-     * @param string $token
-     * @param array $config name-value pairs that will be used to initialize the object properties
-     * @throws InvalidArgumentException if token is empty or not valid
-     */
-    public function __construct($token, $config = [])
-    {
-        if (empty($token) || !is_string($token)) {
-            throw new InvalidArgumentException('Password reset token cannot be blank.');
-        }
-        $this->_user = User::findByPasswordResetToken($token);
-        if (!$this->_user) {
-            throw new InvalidArgumentException('Wrong password reset token.');
-        }
-        parent::__construct($config);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function rules()
     {
         return [
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+            [['password', 'passwordRepeat'], 'required', 'message' => 'Field "{attribute}" obligatory'],
+            [['password'], 'string', 'min' => 6, 'tooShort' => 'Very short {attribute} (min. 6 characters)'],
+            [['passwordRepeat'], 'compare', 'compareAttribute' => 'password', 'message' => "Password mismatch"],
         ];
     }
 
-    /**
-     * Resets password.
-     *
-     * @return bool if password was reset.
-     */
-    public function resetPassword()
+    public function attributeLabels()
     {
-        $user = $this->_user;
-        $user->setPassword($this->password);
-        $user->removePasswordResetToken();
+        return [
+            'password' => 'Password',
+            'passwordRepeat' => 'Password Repeat'
+        ];
+    }
 
-        return $user->save(false);
+    public function resetPassword($user)
+    {
+        if ($this->validate()) {
+            $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+
+            return $user->save();
+        }
+
+        return false;
     }
 }

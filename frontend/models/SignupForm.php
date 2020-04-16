@@ -1,18 +1,21 @@
 <?php
+
 namespace frontend\models;
 
+
+use common\models\User;
 use Yii;
 use yii\base\Model;
-use common\models\User;
+use yii\helpers\Html;
 
-/**
- * Signup form
- */
 class SignupForm extends Model
 {
-    public $username;
     public $email;
     public $password;
+    public $passwordRepeat;
+    public $name;
+    public $surname;
+    public $auth_key;
 
 
     /**
@@ -21,59 +24,93 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            ['username', 'trim'],
-            ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            [['email', 'password', 'passwordRepeat'], 'required', 'message' => 'Field "{attribute}" obligatory'],
+            [['email'], 'trim'],
+            [['email'], 'email', 'message' => 'Invalid email format'],
+            [['email'], 'string', 'max' => 255],
+            [['email'], 'unique', 'targetClass' => User::class, 'message' => 'This email address has already been taken.'],
+            [['name','surname',  'email','auth_key'], 'string', 'max' => 255],
+            [['password'], 'string', 'min' => 6, 'tooShort' => 'Very short {attribute} (min 6 characters)'],
+            [['passwordRepeat'], 'compare', 'compareAttribute' => 'password', 'message' => "Password mismatch"],
+        ];
+    }
 
-            ['email', 'trim'],
-            ['email', 'required'],
-            ['email', 'email'],
-            ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
-
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6],
+    public function attributeLabels()
+    {
+        return [
+            'email' => 'Email',
+            'password' => 'Password',
+            'passwordRepeat' => 'Password Repeat'
         ];
     }
 
     /**
-     * Signs user up.
-     *
-     * @return bool whether the creating new account was successful and email was sent
+     * @return User | null
+     * @throws \yii\base\Exception
      */
+    public function save()
+    {
+        if ($this->validate()) {
+            $user = new User();
+            $user->email = $this->email;
+            $user->surname = $this->surname;
+            $user->name = $this->name;
+            $user->auth_key = Yii::$app->security->generateRandomString();
+            $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+            if ($user->save()) {
+                return $user;
+            }
+        }
+    }
+
     public function signup()
     {
         if (!$this->validate()) {
             return null;
         }
-        
+
         $user = new User();
-        $user->username = $this->username;
         $user->email = $this->email;
-        $user->setPassword($this->password);
-        $user->generateAuthKey();
-        $user->generateEmailVerificationToken();
-        return $user->save() && $this->sendEmail($user);
+        $user->surname = $this->surname;
+        $user->name = $this->name;
+        $user->auth_key = Yii::$app->security->generateRandomString();
+        $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+        return $user->save() && $this->sendEmail($this->email);
 
     }
 
-    /**
-     * Sends confirmation email to user
-     * @param User $user user model to with email should be send
-     * @return bool whether the email was sent
-     */
-    protected function sendEmail($user)
+    protected function sendEmail($email)
     {
-        return Yii::$app
-            ->mailer
-            ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user]
-            )
-            ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-            ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
-            ->send();
+        $user = User::findByEmail($email);
+
+        if (!empty($user)) {
+            $resetLink = Yii::$app->urlManager->createAbsoluteUrl(['user/confirm-email', 'authKey' => $user->auth_key]);
+            $mail = Yii::$app->mailer->compose()
+                ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
+                ->setTo($email)
+                ->setSubject('Уведомление с сайта NewLists.com')
+                ->setTextBody('Здравствуйте! 
+                                   Вы отправили запрос на регистрацию. Для того чтобы подтвердить свой Email, перейдите по ссылке' . Html::a(Html::encode($resetLink), $resetLink) . '
+                                   Если ссылка не открывается, тогда скопируйте её и вставьте в браузер ' . Html::a(Html::encode($resetLink), $resetLink) . '
+                                   Пожалуйста, проигнорируйте данное письмо, если оно попало к Вам по ошибке.
+                                   С уважением,
+                                   Служба поддержки проекта NewLists.com')
+                ->setHtmlBody('<h2>Здравствуйте!</h2>
+                                    <p>Вы отправили запрос на регистрацию. Для того чтобы подтвердить свой Email, перейдите по <a href="' . $resetLink . '">ссылке</a></p>
+                                    <br>
+                                    <p>Если ссылка не открывается, тогда скопируйте её и вставьте в браузер ' . $resetLink . '</p>
+                                    <br>
+                                    <p>Пожалуйста, проигнорируйте данное письмо, если оно попало к Вам по ошибке.</p>
+                                    <br>
+                                    <br>
+                                    <p>С уважением, 
+                                    <br>Служба поддержки проекта <a>NewLists.com</a></p>');
+
+            return $mail->send();
+
+        } else {
+            return false;
+        }
     }
+
 }

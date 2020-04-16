@@ -1,7 +1,7 @@
-
 <?php
 use yii\helpers\Html;
 use common\widgets\newlist\NewsWidget;
+use common\widgets\newlist\NewsletterWidget;
 ?>
     <!-- ##### Hero Area Start ##### -->
     <section class="hero--area section-padding-80">
@@ -9,162 +9,39 @@ use common\widgets\newlist\NewsWidget;
             <div class="row no-gutters">
                 <div class="col-12 col-md-7 col-lg-8">
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="post-1" role="tabpanel" aria-labelledby="post-1-tab">
+                        <?php foreach ($newlists as $newlist):?>
+                        <div class="tab-pane fade <?php if($newlist->id ==1){echo 'active show';}?>" id="<?='post-'.$newlist->id?>" role="tabpanel" aria-labelledby="<?='post-'.$newlist->id.'-tab'?>">
                             <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/img/bg-img/'.$newlists[0]->img;?>);">
+                            <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/images/news/'.$newlist->id.'.jpg'?>);">
                                 <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
+<!--                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>-->
+                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newlist->id, 'category'=> $newlist->categoryName ], ['class' => 'btn play-btn']) ?>
 
                                 <!-- Post Content -->
                                 <div class="post-content">
-
-                                    <?= Html::a("", ['newlist/grid', 'category'=> $newlists[0]->categoryName ], ['class' => 'post-cata']) ?>
-                                    <?= Html::a("", ['newlist/single', 'id' => $newlists[0]->id, 'category'=> $newlists[0]->categoryName ], ['class' => 'post-title']) ?>
+                                    <a href="#" class="post-cata"><?=ucfirst($newlist->categoryName)?></a>
+                                    <?= Html::a("$newlist->title", ['newlist/single', 'id' => $newlist->id, 'category'=> $newlist->categoryName ], ['class' => 'post-title']) ?>
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newlists[0]->likes_count?></a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <?=$newlists[0]->views_count?></a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlist->getCountComment($newlist->id)?></a>
+                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i><?=$newlist->views_count?></a>
+                                        <?php if($newlist->getLikeIcone($newlist->id) == null){?>
+                                            <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlist->id?>"><?=$newlist->likes_count?></i></a>
+                                        <?php } else {?>
+                                            <a href="#"><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$newlist->id?>"><?=$newlist->likes_count?></i></a>
+                                        <?php };?>
+                                        <?php if($newlist->getFavoriteIcone($newlist->id)){?>
+                                            <a href="#"><i data-id="<?=$newlist->id?>" class="fa fa-star-o star" aria-hidden="true"></i></a>
+                                        <?php } else {?>
+                                            <a href="#"><i data-id="<?=$newlist->id?>" class="fa fa-star star" aria-hidden="true"></i></a>
+                                        <?php };?>
                                     </div>
                                 </div>
 
                                 <!-- Video Duration -->
-                                <span class="video-duration">
-                                    <?= Html::a("5:03", ['newlist/video', 'id' => $newlists[0]->id, 'category'=> $newlists[0]->categoryName ], ['class' => 'post-title']) ?>
-                                </span>
+                                <span class="video-duration"><?=$newlist->video_time?></span>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="post-2" role="tabpanel" aria-labelledby="post-2-tab">
-                            <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(/img/bg-img/8.jpg);">
-                                <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
-                                <!-- Post Content -->
-                                <div class="post-content">
-                                    <a href="#" class="post-cata">Sports</a>
-                                    <a href="single-post.html" class="post-title">Reunification of migrant toddlers, parents should be completed Thursday</a>
-                                    <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 25</a>
-                                    </div>
-                                </div>
-
-                                <!-- Video Duration -->
-                                <span class="video-duration">
-                                    05.03
-                                </span>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="post-3" role="tabpanel" aria-labelledby="post-3-tab">
-                            <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(/img/bg-img/9.jpg);">
-                                <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
-                                <!-- Post Content -->
-                                <div class="post-content">
-                                    <a href="#" class="post-cata">Sports</a>
-                                    <a href="single-post.html" class="post-title">Reunification of migrant toddlers, parents should be completed Thursday</a>
-                                    <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 25</a>
-                                    </div>
-                                </div>
-
-                                <!-- Video Duration -->
-                                <span class="video-duration">05.03</span>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="post-4" role="tabpanel" aria-labelledby="post-4-tab">
-                            <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(/img/bg-img/10.jpg);">
-                                <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
-                                <!-- Post Content -->
-                                <div class="post-content">
-                                    <a href="#" class="post-cata">Sports</a>
-                                    <a href="single-post.html" class="post-title">Reunification of migrant toddlers, parents should be completed Thursday</a>
-                                    <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 25</a>
-                                    </div>
-                                </div>
-
-                                <!-- Video Duration -->
-                                <span class="video-duration">05.03</span>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="post-5" role="tabpanel" aria-labelledby="post-5-tab">
-                            <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(/img/bg-img/7.jpg);">
-                                <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
-                                <!-- Post Content -->
-                                <div class="post-content">
-                                    <a href="#" class="post-cata">Sports</a>
-                                    <a href="single-post.html" class="post-title">Reunification of migrant toddlers, parents should be completed Thursday</a>
-                                    <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 25</a>
-                                    </div>
-                                </div>
-
-                                <!-- Video Duration -->
-                                <span class="video-duration">05.03</span>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="post-6" role="tabpanel" aria-labelledby="post-6-tab">
-                            <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(/img/bg-img/10.jpg);">
-                                <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
-                                <!-- Post Content -->
-                                <div class="post-content">
-                                    <a href="#" class="post-cata">Sports</a>
-                                    <a href="single-post.html" class="post-title">Reunification of migrant toddlers, parents should be completed Thursday</a>
-                                    <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 25</a>
-                                    </div>
-                                </div>
-
-                                <!-- Video Duration -->
-                                <span class="video-duration">05.03</span>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="post-7" role="tabpanel" aria-labelledby="post-7-tab">
-                            <!-- Single Feature Post -->
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(/img/bg-img/7.jpg);">
-                                <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
-                                <!-- Post Content -->
-                                <div class="post-content">
-                                    <a href="#" class="post-cata">Sports</a>
-                                    <a href="single-post.html" class="post-title">Reunification of migrant toddlers, parents should be completed Thursday</a>
-                                    <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 25</a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 25</a>
-                                    </div>
-                                </div>
-
-                                <!-- Video Duration -->
-                                <span class="video-duration">05.03</span>
-                            </div>
-                        </div>
+                        <?php endforeach;?>
                     </div>
                 </div>
 
@@ -172,20 +49,24 @@ use common\widgets\newlist\NewsWidget;
                     <ul class="nav vizew-nav-tab" role="tablist">
                          <?php foreach ($newlists as $newlist):?>
                         <li class="nav-item">
-                            <a class="nav-link active" id="post-1-tab" data-toggle="pill" href="#post-1" role="tab" aria-controls="post-1" aria-selected="true">
+                            <a class="nav-link <?php if($newlist->id ==1){echo 'active show';}?>" id="<?='post-'.$newlist->id.'-tab'?>" data-toggle="pill" href="<?='#post-'.$newlist->id?>" role="tab" aria-controls="<?='post-'.$newlist->id?>" aria-selected="true">
                                 <!-- Single Blog Post -->
                                 <div class="single-blog-post style-2 d-flex align-items-center">
                                     <div class="post-thumbnail">
-                                        <img src="<?='/img/bg-img/'.$newlist->img ?>" alt="">
+                                        <img src="<?='/images/news/'.$newlist->id.'.jpg' ?>" alt="">
                                     </div>
                                     <div class="post-content">
                                         <h6 class="post-title">
                                             <?= $newlist->title; ?>
                                         </h6>
                                         <div class="post-meta d-flex justify-content-between">
-                                            <span><i class="fa fa-comments-o" aria-hidden="true"></i> 25</span>
-                                            <span><i class="fa fa-eye" aria-hidden="true"></i><?=$newlist->likes_count?></span>
-                                            <span><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <?=$newlist->views_count?></span>
+                                            <span><i class="fa fa-comments-o" aria-hidden="true"><?=$newlist->getCountComment($newlist->id)?></i></span>
+                                            <span><i class="fa fa-eye" aria-hidden="true"><?=$newlist->views_count?></i></span>
+                                            <?php if($newlist->getLikeIcone($newlist->id) == null){?>
+                                            <span><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlist->id?>"><?=$newlist->likes_count?></i></span>
+                                            <?php } else {?>
+                                            <span><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$newlist->id?>"><?=$newlist->likes_count?></i></span>
+                                            <?php };?>
                                         </div>
                                     </div>
                                 </div>
@@ -219,11 +100,11 @@ use common\widgets\newlist\NewsWidget;
                     <div class="single-post-area mb-80">
                         <!-- Post Thumbnail -->
                         <div class="post-thumbnail">
-                            <img src="<?='/img/bg-img/'.$newviwe->img?>" alt="" style="width: 100%;">
+                            <img src="<?='/images/news/'.$newviwe->id.'.jpg'?>" alt="" style="width: 100%;height: 240px;">
 
                             <!-- Video Duration -->
                             <span class="video-duration">
-                                <?= Html::a("5:03", ['newlist/video', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName ], ['class' => 'post-title']) ?>
+                                <?= Html::a($newviwe->video_time, ['newlist/video', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName ], ['class' => 'post-title']) ?>
 
                             </span>
                         </div>
@@ -233,17 +114,24 @@ use common\widgets\newlist\NewsWidget;
                             <?= Html::a("$newviwe->categoryName", ['newlist/grid', 'category'=> $newviwe->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
                             <?= Html::a("$newviwe->title", ['newlist/single', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName ], ['class' => 'post-title']) ?>
                             <div class="post-meta d-flex">
-                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 22</a>
+                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newviwe->getCountComment($newviwe->id)?></a>
                                 <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newviwe->views_count?></a>
-                                <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <?=$newviwe-> likes_count?></a>
+                                <?php if($newviwe->getLikeIcone($newviwe->id) == null){?>
+                                <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newviwe->id?>"><?=$newviwe->likes_count?></i></a>
+                                <?php } else {?>
+                                    <a href="#"><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$newviwe->id?>"><?=$newviwe->likes_count?></i></a>
+                                <?php };?>
+                                <?php if($newviwe->getFavoriteIcone($newviwe->id)){?>
+                                    <a href="#"><i data-id="<?=$newviwe->id?>" class="fa fa-star-o star" aria-hidden="true"></i></a>
+                                <?php } else {?>
+                                    <a href="#"><i data-id="<?=$newviwe->id?>" class="fa fa-star star" aria-hidden="true"></i></a>
+                                <?php };?>
                             </div>
                         </div>
                     </div>
                 </div>
                 <?php endforeach;?>
-
             </div>
-
         </div>
     </section>
     <!-- ##### Trending Posts Area End ##### -->
@@ -264,79 +152,36 @@ use common\widgets\newlist\NewsWidget;
                         <div class="featured-post-slides owl-carousel mb-30">
                             <!-- Single Feature Post -->
                             <?php foreach ($newlikes as $newlike) :?>
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/img/bg-img/'.$newlike->img?>);">
+                            <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/images/news/'.$newlike->id.'.jpg'?>);">
                                 <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
+                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newlist->id, 'category'=> $newlist->categoryName ], ['class' => 'btn play-btn']) ?>
                                 <!-- Post Content -->
                                 <div class="post-content">
                                     <?= Html::a("$newlike->categoryName", ['newlist/grid', 'category'=> $newlike->categoryName ], ['class' => 'post-cata']) ?>
                                     <?= Html::a("$newlike->title", ['newlist/single', 'id' => $newlike->id, 'category'=> $newlike->categoryName ], ['class' => 'post-title']) ?>
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlike->getCountComment($newlike->id)?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newlike->views_count?></a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i><?=$newlike-> likes_count?></a>
+                                        <?php if($newlike->getLikeIcone($newlike->id) == null){?>
+                                            <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlike->id?>"><?=$newlike->likes_count?></i></a>
+                                        <?php } else {?>
+                                            <a href="#"><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$newlike->id?>"><?=$newlike->likes_count?></i></a>
+                                        <?php };?>
+                                        <?php if($newlike->getFavoriteIcone($newlike->id)){?>
+                                            <a href="#"><i data-id="<?=$newlike->id?>" class="fa fa-star-o star" aria-hidden="true"></i></a>
+                                        <?php } else {?>
+                                            <a href="#"><i data-id="<?=$newlike->id?>" class="fa fa-star star" aria-hidden="true"></i></a>
+                                        <?php };?>
                                     </div>
                                 </div>
-
                                 <!-- Video Duration -->
                                 <span class="video-duration">
-                                    <?= Html::a("5:03", ['newlist/video', 'id' => $newlike->id, 'category'=> $newlike->categoryName ], ['class' => 'post-title']) ?>
-
+                                    <?= Html::a($newlike->video_time, ['newlist/video', 'id' => $newlike->id, 'category'=> $newlike->categoryName ], ['class' => 'post-title']) ?>
                                 </span>
                             </div>
                             <?php endforeach;?>
                         </div>
 
-                        <div class="row">
-                            <!-- Single Blog Post -->
-                            <div class="col-12 col-md-6">
-                                <div class="single-post-area mb-80">
-                                    <!-- Post Thumbnail -->
-                                    <div class="post-thumbnail">
-                                        <img src="/img/bg-img/12.jpg" alt="">
-
-                                        <!-- Video Duration -->
-                                        <span class="video-duration">05.03</span>
-                                    </div>
-
-                                    <!-- Post Content -->
-                                    <div class="post-content">
-                                        <a href="#" class="post-cata cata-sm cata-danger">Game</a>
-                                        <a href="single-post.html" class="post-title">Searching for the 'angel' who held me on Westminste Bridge</a>
-                                        <div class="post-meta d-flex">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 28</a>
-                                            <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 17</a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 22</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Single Blog Post -->
-                            <div class="col-12 col-md-6">
-                                <div class="single-post-area mb-80">
-                                    <!-- Post Thumbnail -->
-                                    <div class="post-thumbnail">
-                                        <img src="img/bg-img/13.jpg" alt="">
-
-                                        <!-- Video Duration -->
-                                        <span class="video-duration">05.03</span>
-                                    </div>
-
-                                    <!-- Post Content -->
-                                    <div class="post-content">
-                                        <a href="#" class="post-cata cata-sm cata-primary">Business</a>
-                                        <a href="single-post.html" class="post-title">Love Island star's boyfriend found dead after her funeral</a>
-                                        <div class="post-meta d-flex">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 14</a>
-                                            <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 38</a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 22</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="row">
                          <?php foreach ($categorlists as $categorlist):?>
@@ -354,11 +199,11 @@ use common\widgets\newlist\NewsWidget;
                                     <div class="single-post-area">
                                         <!-- Post Thumbnail -->
                                         <div class="post-thumbnail">
-                                            <img src="<?='/img/bg-img/'.$new->img?>" alt="">
+                                            <img src="<?='/images/news/'.$new->id.'.jpg'?>" alt="">
 
                                             <!-- Video Duration -->
-                                            <span class="video-duration">
-                                                <?= Html::a("5:03", ['newlist/video', 'id' => $new->id, 'category'=> $new->categoryName ], ['class' => 'post-title']) ?>
+                                            <span class ="video-duration">
+                                                <?= Html::a($new->video_time, ['newlist/video', 'id' => $new->id, 'category'=> $new->categoryName ], ['class' => 'post-title']) ?>
                                             </span>
                                         </div>
 
@@ -367,9 +212,18 @@ use common\widgets\newlist\NewsWidget;
                                             <?= Html::a("$new->categoryName", ['newlist/grid', 'category'=> $new->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
                                             <?= Html::a("$new->title", ['newlist/single', 'id' => $new->id, 'category'=> $new->categoryName ], ['class' => 'post-title']) ?>
                                             <div class="post-meta d-flex">
-                                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 14</a>
+                                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$new->getCountComment($new->id)?></a>
                                                 <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$new->views_count?></a>
-                                                <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <?=$new->likes_count?></a>
+                                                <?php if($new->getLikeIcone($new->id) == null){?>
+                                                    <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$new->id?>"><?=$new->likes_count?></i></a>
+                                                <?php } else {?>
+                                                    <a href="#"><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$new->id?>"><?=$new->likes_count?></i></a>
+                                                <?php };?>
+                                                <?php if($new->getFavoriteIcone($new->id)){?>
+                                                    <a href="#"><i data-id="<?=$new->id?>" class="fa fa-star-o star" aria-hidden="true"></i></a>
+                                                <?php } else {?>
+                                                    <a href="#"><i data-id="<?=$new->id?>" class="fa fa-star star" aria-hidden="true"></i></a>
+                                                <?php };?>
                                             </div>
                                         </div>
                                     </div>
@@ -381,76 +235,6 @@ use common\widgets\newlist\NewsWidget;
                         </div>
 
 
-                        <div class="row mb-30">
-                            <!-- Single Blog Post -->
-                            <div class="col-12 col-lg-6">
-                                <div class="single-blog-post style-3 d-flex mb-50">
-                                    <div class="post-thumbnail">
-                                        <img src="img/bg-img/16.jpg" alt="">
-                                    </div>
-                                    <div class="post-content">
-                                        <a href="single-post.html" class="post-title">Epileptic boy's cannabis let through border</a>
-                                        <div class="post-meta d-flex justify-content-between">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 16</a>
-                                            <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 26</a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 17</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Single Blog Post -->
-                            <div class="col-12 col-lg-6">
-                                <div class="single-blog-post style-3 d-flex mb-50">
-                                    <div class="post-thumbnail">
-                                        <img src="img/bg-img/18.jpg" alt="">
-                                    </div>
-                                    <div class="post-content">
-                                        <a href="single-post.html" class="post-title">Paramedics 'drilled into boat death woman'</a>
-                                        <div class="post-meta d-flex justify-content-between">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 16</a>
-                                            <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 26</a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 17</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Single Blog Post -->
-                            <div class="col-12 col-lg-6">
-                                <div class="single-blog-post style-3 d-flex mb-50">
-                                    <div class="post-thumbnail">
-                                        <img src="img/bg-img/19.jpg" alt="">
-                                    </div>
-                                    <div class="post-content">
-                                        <a href="single-post.html" class="post-title">Tory vice-chairs quit over PM's Brexit plan</a>
-                                        <div class="post-meta d-flex justify-content-between">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 16</a>
-                                            <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 26</a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 17</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Single Blog Post -->
-                            <div class="col-12 col-lg-6">
-                                <div class="single-blog-post style-3 d-flex mb-50">
-                                    <div class="post-thumbnail">
-                                        <img src="img/bg-img/20.jpg" alt="">
-                                    </div>
-                                    <div class="post-content">
-                                        <a href="single-post.html" class="post-title">Do This One Simple Action for an Absolutely</a>
-                                        <div class="post-meta d-flex justify-content-between">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 16</a>
-                                            <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> 26</a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> 17</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Section Heading -->
                         <div class="section-heading style-2">
                             <h4>Latest News</h4>
@@ -461,25 +245,33 @@ use common\widgets\newlist\NewsWidget;
                         <div class="featured-post-slides owl-carousel mb-30">
                             <!-- Single Feature Post -->
                             <?php foreach ($newtimes as $newtime):?>
-                            <div class="single-feature-post video-post bg-img" style="background-image: url(<?='img/bg-img/'.$newtime->img ?>);">
+                            <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/images/news/'.$newtime->id.'.jpg' ?>);">
                                 <!-- Play Button -->
-                                <a href="video-post.html" class="btn play-btn"><i class="fa fa-play" aria-hidden="true"></i></a>
-
+                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'btn play-btn']) ?>
                                 <!-- Post Content -->
                                 <div class="post-content">
                                     <?= Html::a("$newtime->categoryName", ['newlist/grid', 'category'=> $newtime->categoryName  ], ['class' => 'post-cata ']) ?>
                                     <?= Html::a("$newtime->title", ['newlist/single', 'id' => $newtime->id, 'category'=> $newtime->categoryName  ], ['class' => 'post-title ']) ?>
 
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 25</a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newtime->getCountComment($newtime->id)?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newtime->views_count?></a>
-                                        <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <?=$newtime->likes_count?></a>
+                                        <?php if($newtime->getLikeIcone($newtime->id) == null){?>
+                                            <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newtime->id?>"><?=$newtime->likes_count?></i></a>
+                                        <?php } else {?>
+                                            <a href="#"><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$newtime->id?>"><?=$newtime->likes_count?></i></a>
+                                        <?php };?>
+                                        <?php if($newtime->getFavoriteIcone($newtime->id)){?>
+                                            <a href="#"><i data-id="<?=$newtime->id?>" class="fa fa-star-o star" aria-hidden="true"></i></a>
+                                        <?php } else {?>
+                                            <a href="#"><i data-id="<?=$newtime->id?>" class="fa fa-star star" aria-hidden="true"></i></a>
+                                        <?php };?>
                                     </div>
                                 </div>
 
                                 <!-- Video Duration -->
                                 <span class="video-duration">
-                                         <?= Html::a("5:03", ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title']) ?>
+                                         <?= Html::a($newtime->video_time, ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title']) ?>
                                 </span>
                             </div>
                             <?php endforeach;?>
@@ -492,11 +284,11 @@ use common\widgets\newlist\NewsWidget;
                                 <div class="col-12 col-lg-6">
                                     <!-- Post Thumbnail -->
                                     <div class="post-thumbnail">
-                                        <img src="<?='img/bg-img/'.$newtime->img ?>" alt="" style="width: 100%;">
+                                        <img src="<?='/images/news/'.$newtime->id.'.jpg' ?>" alt="" style="width: 100%;height: 200px;">
 
                                         <!-- Video Duration -->
                                         <span class="video-duration">
-                                           <?= Html::a("5:03", ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title']) ?>
+                                           <?= Html::a($newtime->video_time, ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title']) ?>
                                         </span>
                                     </div>
                                 </div>
@@ -507,26 +299,34 @@ use common\widgets\newlist\NewsWidget;
                                         <?= Html::a("$newtime->title", ['newlist/single', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title mb-2']) ?>
 
                                         <div class="post-meta d-flex align-items-center mb-2">
-                                            <a href="#" class="post-author">By Jane</a>
+                                            <a href="#" class="post-author">Added</a>
                                             <i class="fa fa-circle" aria-hidden="true"></i>
                                             <a href="#" class="post-date"><?=$newtime->created_at?></a>
                                         </div>
-                                        <p class="mb-2"><?=substr($newtime->content, 0, 100)?></p>
+                                        <p class="mb-2"><?=$newtime->getShortText($newtime->content,100)?></p>
                                         <div class="post-meta d-flex">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i> 32</a>
+                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newtime->getCountComment($newtime->id)?></a>
                                             <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newtime->views_count?></a>
-                                            <a href="#"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <?=$newtime->likes_count?></a>
+                                            <?php if($newtime->getLikeIcone($newtime->id) == null){?>
+                                                <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newtime->id?>"><?=$newtime->likes_count?></i></a>
+                                            <?php } else {?>
+                                                <a href="#"><i class="fa fa-thumbs-up like" aria-hidden="true" data-id="<?=$newtime->id?>"><?=$newtime->likes_count?></i></a>
+                                            <?php };?>
+                                            <?php if($newtime->getFavoriteIcone($newtime->id)){?>
+                                                <a href="#"><i data-id="<?=$newtime->id?>" class="fa fa-star-o star" aria-hidden="true"></i></a>
+                                            <?php } else {?>
+                                                <a href="#"><i data-id="<?=$newtime->id?>" class="fa fa-star star" aria-hidden="true"></i></a>
+                                            <?php };?>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <?php endforeach;?>
-
                     </div>
                 </div>
+                <?php echo NewsWidget::widget(['newlikes' => $newlikes, 'newviwes' => $newviwes, 'newlatest'=> $newtimes]); ?>
 
-                <?php echo NewsWidget::widget(); ?>
             </div>
         </div>
     </section>
