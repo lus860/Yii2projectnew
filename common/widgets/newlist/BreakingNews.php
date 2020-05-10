@@ -17,7 +17,7 @@ class BreakingNews extends Widget
 
     public function run()
     {
-        $newlatest = Newlist::find()->with("categories")->orderBy(['id'=> SORT_DESC])->limit(5)->all();
+        $newlatest = Newlist::find()->with(['newlistsCategory'])->orderBy(['id'=> SORT_DESC])->limit(5)->all();
 
         return $this->render('breakingNews',[
               'breakingnews' => $newlatest,

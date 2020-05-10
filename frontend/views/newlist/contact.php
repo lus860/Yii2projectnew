@@ -56,17 +56,17 @@ $this->title ='Contact';
 
                                 <!-- Video Duration -->
                                 <span class="video-duration">
-                        <?= Html::a($newlikes->video_time, ['newlist/video', 'id' => $newlikes->id, 'category'=> $newlikes->categoryName ], ['class' => 'post-title']) ?>
+                        <?= Html::a($newlikes->video_time, ['newlist/video', 'id' => $newlikes->id, 'category'=> $newlikes->categoryName], ['class' => 'post-title']) ?>
 
                     </span>
                             </div>
 
                             <!-- Post Content -->
                             <div class="post-content">
-                                <?= Html::a("$newlikes->categoryName", ['newlist/grid', 'category'=> $newlikes->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
-                                <?= Html::a("$newlikes->title", ['newlist/single', 'id' => $newlikes->id, 'category'=> $newlikes->categoryName ], ['class' => 'post-title']) ?>
+                                <?= Html::a("$newlikes->categoryName", ['newlist/grid', 'category'=> $newlikes->categoryName], ['class' => 'post-cata cata-sm cata-success']) ?>
+                                <?= Html::a("$newlikes->title", ['newlist/single', 'id' => $newlikes->id, 'category'=> $newlikes->categoryName], ['class' => 'post-title']) ?>
                                 <div class="post-meta d-flex">
-                                    <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlikes->getCountComment($newlikes->id)?></a>
+                                    <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlikes->comment_count?></a>
                                     <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newlikes->views_count?></a>
                                     <?php if($newlikes->getLikeIcone($newlikes->id) == null){?>
                                         <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlikes->id?>"><?=$newlikes->likes_count?></i></a>

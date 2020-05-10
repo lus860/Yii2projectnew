@@ -55,12 +55,12 @@ class NewlistController extends Controller
     }
     public function actionIndex()
     {
-        $newlikes = Newlist::NewLikes(3);
+       $newlikes = Newlist::NewLikes(3);
         $newviwes = Newlist::NewViwes(3);
         $newtime = Newlist::NewLast(5);
-        $newlist = Newlist::find()->with("categories")->all();
-        $categorlist = Category::find()->with("newlists")->all();
-
+        $newlist = Newlist::find()->with(['categories'])->all();
+        $categorlist = Category::find()->with(['newlists'])->all();
+   // var_dump($newviwes);die;
          return $this->render('index',[
              'newlists' => $newlist,
              'newlikes' => $newlikes,
@@ -73,7 +73,7 @@ class NewlistController extends Controller
 
     public function actionGrid($category ='music')
     {
-        $model = Category::find()->where(['name' => $category])->with("newlists")->one();
+        $model = Category::find()->with(['newlists'])->where(['name' => $category])->one();
         $news = $model->getNewlist();
         $pages = new Pagination(['totalCount' => $news->count(), 'pageSize' => 12]);
         $new = $news->offset($pages->offset)
@@ -81,6 +81,7 @@ class NewlistController extends Controller
            ->all();
         return $this->render('grid',
             [   'news' => $new,
+                'model' => $model,
                 'pages' => $pages,
                 'category' => $category,
             ]);
@@ -94,8 +95,8 @@ class NewlistController extends Controller
      */
     public function actionList()
     {
-        $news = Newlist::find()->with("categories");
-        $pages = new Pagination(['totalCount' => $news->count(), 'pageSize' => 8]);
+        $news = Newlist::find()->with(['categories']);
+        $pages = new Pagination(['totalCount' => $news->count(), 'pageSize' => 10]);
         $models = $news->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
@@ -130,9 +131,9 @@ class NewlistController extends Controller
 
     public function actionSingle($id, $category )
     {
-        $model = Newlist::find()->where(['id' => $id])->with("categories")->one();
+        $model = Newlist::find()->with(['categories'])->where(['id' => $id])->one();
         $model->views_count++;
-        $model->save();
+        $model->save(false);
         return $this->render('single',[
             'model' => $model,
             'category' => $category,
@@ -142,9 +143,9 @@ class NewlistController extends Controller
 
     public function actionVideo($id, $category)
     {
-        $model = Newlist::find()->where(['id' => $id])->with("categories")->one();
+        $model = Newlist::find()->with(['categories'])->where(['id' => $id])->one();
         $model->views_count++;
-        $model->save();
+        $model->save(false);
         return $this->render('video',[
             'model' => $model,
             'category' => $category,
@@ -154,7 +155,7 @@ class NewlistController extends Controller
 
     protected function findModel($id)
     {
-        if (($model = Newlist::findOne($id)) !== null) {
+        if (($model = Newlist::find()->with(['categories'])->where(['id' => $id])->one()) !== null) {
             return $model;
         }
 
@@ -171,13 +172,13 @@ class NewlistController extends Controller
                 $like = new Like();
                 $like->new_id = $newid;
                 $like->user_id = Yii::$app->user->identity->id;
-                if( $like->save() &&  $model->save() ){
+                if( $like->save(false) &&  $model->save(false) ){
                     return true;
                 };
             } else {
                 $is_like->delete();
                 $model->likes_count--;
-                if( $model->save() ){
+                if( $model->save(false) ){
                     return true;
                 };
 
@@ -196,7 +197,8 @@ class NewlistController extends Controller
 
     public function beforeAction($action)
     {
-        $this->enableCsrfValidation = false;
+       // $this->enableCsrfValidation = false;
+        Newlist::LikeIdentity();
         return parent::beforeAction($action);
     }
 

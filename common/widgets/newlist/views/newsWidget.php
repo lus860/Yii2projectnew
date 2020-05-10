@@ -39,7 +39,7 @@ use common\widgets\newlist\NewsletterWidget;
                     <?= Html::a("$newlatestwidget->categoryName", ['newlist/grid', 'category'=> $newlatestwidget->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
                     <?= Html::a("$newlatestwidget->title", ['newlist/single', 'id' => $newlatestwidget->id, 'category'=> $newlatestwidget->categoryName ], ['class' => 'post-title']) ?>
                     <div class="post-meta d-flex">
-                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newlatestwidget->getCountComment($newlatestwidget->id)?></i></a>
+                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newlatestwidget->comment_count?></i></a>
                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newlatestwidget->views_count?></a>
                         <?php if($newlatestwidget->getLikeIcone($newlatestwidget->id) == null){?>
                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlatestwidget->id?>"><?=$newlatestwidget->likes_count?></i></a>
@@ -54,7 +54,7 @@ use common\widgets\newlist\NewsletterWidget;
 
             <!-- Single Blog Post -->
             <?php foreach ($newlatestswidget as $newlatestwidget):?>
-            <?php if($newlatestwidget == $newlatestswidget[0]){
+            <?php if($newlatestwidget === $newlatestswidget[0]){
                 continue;}?>
             <div class="single-blog-post d-flex">
                 <div class="post-thumbnail">
@@ -63,7 +63,7 @@ use common\widgets\newlist\NewsletterWidget;
                 <div class="post-content">
                     <?= Html::a("$newlatestwidget->title", ['newlist/single', 'id' => $newlatestwidget->id, 'category'=> $newlatestwidget->categoryName ], ['class' => 'post-title']) ?>
                     <div class="post-meta d-flex justify-content-between">
-                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newlatestwidget->getCountComment($newlatestwidget->id)?></i></a>
+                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newlatestwidget->comment_count?></i></a>
                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i><?=$newlatestwidget->views_count?></a>
                         <?php if($newlatestwidget->getLikeIcone($newlatestwidget->id) == null){?>
                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlatestwidget->id?>"><?=$newlatestwidget->likes_count?></i></a>
@@ -99,7 +99,7 @@ use common\widgets\newlist\NewsletterWidget;
                 <?= Html::a("$newlikeswidget->categoryName", ['newlist/grid', 'category'=> $newlikeswidget->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
                 <?= Html::a("$newlikeswidget->title", ['newlist/single', 'id' => $newlikeswidget->id, 'category'=> $newlikeswidget->categoryName ], ['class' => 'post-title']) ?>
                 <div class="post-meta d-flex">
-                    <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newlikeswidget->getCountComment($newlikeswidget->id)?></i></a>
+                    <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newlikeswidget->comment_count?></i></a>
                     <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newlikeswidget->views_count?></a>
                     <?php if($newlikeswidget->getLikeIcone($newlikeswidget->id) == null){?>
                         <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlikeswidget->id?>"><?=$newlikeswidget->likes_count?></i></a>
@@ -133,7 +133,7 @@ use common\widgets\newlist\NewsletterWidget;
                 <div class="post-content">
                     <?= Html::a(substr($newviwewidget->title,0,50), ['newlist/single', 'id' => $newviwewidget->id, 'category'=> $newviwewidget->categoryName ], ['class' => 'post-title']) ?>
                     <div class="post-meta d-flex justify-content-between">
-                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newviwewidget->getCountComment($newviwewidget->id)?></i></a>
+                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"><?=$newviwewidget->comment_count?></i></a>
                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newviwewidget->views_count?></a>
                         <?php if($newviwewidget->getLikeIcone($newviwewidget->id) == null){?>
                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newviwewidget->id?>"><?=$newviwewidget->likes_count?></i></a>

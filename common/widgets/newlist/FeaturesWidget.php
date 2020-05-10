@@ -17,7 +17,7 @@ class FeaturesWidget extends Widget
 
     public function run()
     {
-        $category = Category::find()->with("newlists")->all();
+        $category = Category::find()->with(['newlists'])->all();
 
         return $this->render('featuresWidget',[
             'category' => $category,

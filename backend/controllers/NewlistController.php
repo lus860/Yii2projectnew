@@ -53,7 +53,7 @@ use backend\controllers\behaviors\AccessBehavior;
             public function actionIndex()
             {
                 $dataProvider = new ActiveDataProvider([
-                    'query' => Newlist::find()->with("categories"),
+                    'query' => Newlist::find()->with(['categories']),
                 ]);
 
                 return $this->render('index', [
@@ -126,7 +126,7 @@ use backend\controllers\behaviors\AccessBehavior;
 
             protected function findModel($id)
             {
-                if (($model = Newlist::findOne($id)) !== null) {
+                if (($model = Newlist::find()->with(['categories'])->where(['id' => $id])->one()) !== null) {
                     return $model;
                 }
 

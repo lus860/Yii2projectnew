@@ -2,12 +2,12 @@
 
 namespace common\models;
 
+use common\models\Category;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use common\models\Category;
 use common\models\NewlistsCategory;
 use zxbodya\yii2\galleryManager\GalleryBehavior;
 use common\models\GalleryImage;
@@ -27,6 +27,7 @@ use common\models\Comment;
  * @property string $video_time
  * @property int|null $likes_count
  * @property int|null $views_count
+ * @property int|null $comment_count
  * @property int $created_at
  * @property int $updated_at
  */
@@ -35,6 +36,7 @@ class  Newlist  extends \yii\db\ActiveRecord
 
     public $category;
     public $image;
+    public static $islike;
 
     public static function tableName()
     {
@@ -92,7 +94,7 @@ class  Newlist  extends \yii\db\ActiveRecord
         return [
             [['category','content', 'title','created_at','updated_at','video_time'], 'string'],
             [['image'], 'file', 'extensions' => 'png, jpg'],
-            [['likes_count','views_count'], 'integer'],
+            [['likes_count','views_count', 'comment_count'], 'integer'],
             [['video'], 'string', 'max' => 255],
 
         ];
@@ -111,6 +113,7 @@ class  Newlist  extends \yii\db\ActiveRecord
             'image' => 'Image',
             'likes_count' => 'Likes Count',
             'views_count' => 'Views Count',
+            'comment_count' => 'Comment Count',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'category' => 'Category',
@@ -128,56 +131,54 @@ class  Newlist  extends \yii\db\ActiveRecord
     }
 
 
-    public function getNext() {
-        $next = $this->find()->where(['>', 'id', $this->id])->one();
-        return $next;
+    public function getNext()
+    {
+        return self::find()->with(['categories'])->where(['id' => $this->id+1])->one();
     }
 
-    public function getPrev() {
-        $prev = $this->find()->where(['<', 'id', $this->id])->orderBy('id desc')->one();
-        return $prev;
+    public function getPrev()
+    {
+        return self::find()->with(['categories'])->where(['id'=> $this->id-1])->orderBy('id desc')->one();
     }
 
 
 
-    public function getPrevCategory() {
+    public function getPrevCategory()
+    {
         if ( $this->getPrev() ) {
-           $prevcategory = $this->getPrev()->getCategories()->one()->name;
-           return $prevcategory;
+            return $this->prev->categories->name;
         } else {
             return false;
         }
     }
 
-    public function getNextCategory() {
+    public function getNextCategory()
+    {
         if ( $this->getNext() ) {
-            $nextcategory = $this->getNext()->getCategories()->one()->name;
-            return $nextcategory;
+            return $this->next->categories->name;
         } else {
             return false;
         }
     }
 
-    public function getCategoryName($param = null) {
+    public function getCategoryName($param = null)
+    {
         if ( $param == 'prev') {
-            if ( $this->getPrev() ) {
-                $prevcategory = $this->getPrev()->getCategories()->one()->name;
-                return $prevcategory;
+            if ( $this->prev) {
+                return $this->prev->categories->name;
             } else {
                 return false;
             }
         }
         if ( $param == 'next') {
-            if ( $this->getNext()) {
-               $nextcategory = $this->getNext()->getCategories()->one()->name;
-               return $nextcategory;
+            if ( $this->next) {
+                return $this->next->categories->name;
             } else {
                 return false;
             }
         }
         if ( $param == null ) {
-            $categoryname = $this->getCategories()->one()->name;
-            return $categoryname;
+            return $this->categories->name;
         }
     }
 
@@ -187,19 +188,19 @@ class  Newlist  extends \yii\db\ActiveRecord
         return $data;
     }
 
-    public function getPrevTitle() {
+    public function getPrevTitle()
+    {
         if ( $this->getPrev() ) {
-           $prevtitle = $this->getPrev()->title;
-           return $prevtitle;
+            return $this->prev->title;
         }else{
             return false;
         }
     }
 
-    public function getNextTitle() {
+    public function getNextTitle()
+    {
         if ( $this->getNext()){
-           $nexttitle = $this->getNext()->title;
-           return $nexttitle;
+            return $this->next->title;
         } else {
             return false;
         }
@@ -229,7 +230,8 @@ class  Newlist  extends \yii\db\ActiveRecord
         return '/frontend/web/images/news/' . $this->id . '.jpg';
     }
 
-    public function getImg($param){
+    public function getImg($param)
+    {
         if(file_exists(Yii::getAlias('@frontend').'/web/images/news/'.$param.'.jpg')) {
             $img = $param.'.jpg';
         } else {
@@ -260,10 +262,19 @@ class  Newlist  extends \yii\db\ActiveRecord
 
     }
 
+    public static function LikeIdentity()
+    {
+        $like = Like::find()->select(['new_id','id'])->asArray()->where(['user_id' => Yii::$app->user->identity->id])->all();
+        self::$islike = ArrayHelper::map( $like,'id','new_id' );
+    }
+
     public function getLikeIcone($new_id)
     {
-        return Like::find()->where(['AND',['user_id'=>Yii::$app->user->identity->id],['new_id'=>$new_id]])->one();
+        if( self::$islike ){
 
+            return in_array($new_id, self::$islike);
+        }
+        return false;
     }
 
     public function getFavoriteIcone($new_id)
@@ -279,33 +290,33 @@ class  Newlist  extends \yii\db\ActiveRecord
          return true;
     }
 
-    public static function NewLikes($limit){
+    public static function NewLikes($limit)
+    {
 
-        return self::find()->with("categories")->orderBy([ 'likes_count'=> SORT_DESC])->limit($limit)->all();
-
-    }
-
-    public static function NewViwes($limit){
-
-        return self::find()->with("categories")->orderBy(['views_count' => SORT_DESC])->limit($limit)->all();
+        return self::find()->with(['categories'])->orderBy([ 'likes_count'=> SORT_DESC])->limit($limit)->all();
 
     }
 
-    public static function NewLast($limit){
+    public static function NewViwes($limit)
+    {
 
-        return self::find()->with("categories")->orderBy([ 'id'=> SORT_DESC])->limit($limit)->all();
+        return self::find()->with(['categories'])->orderBy(['views_count' => SORT_DESC])->limit($limit)->all();
+
+    }
+
+    public static function NewLast($limit)
+    {
+
+        return self::find()->with(['categories'])->orderBy([ 'id'=> SORT_DESC])->limit($limit)->all();
 
     }
 
-    public function getCountComment($new_id){
-
-        return Comment::find()->where(['new_id'=>$new_id])->count();
-
-    }
 
     public function getDate($date)
     {
+
         return Yii::$app->formatter->asDate($date);
+
     }
 
 }

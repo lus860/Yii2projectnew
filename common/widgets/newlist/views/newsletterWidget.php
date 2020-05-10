@@ -40,6 +40,7 @@ use common\models\Newsletteres;
    <div class="newsletter-form">
        <form action="#" method="post">
            <input type="email" name="NewsletteresForm[email]" class="form-control mb-15" id="emailnl" placeholder="Enter your email">
+           <input type="hidden" id="form-token" name="<?=Yii::$app->request->csrfParam?>" value="<?=Yii::$app->request->csrfToken?>">
            <input type="hidden" name="NewsletteresForm[categories_id]" class="form-control mb-15" id='categoriesid'>
            <button type="submit" class="btn vizew-btn w-100">Subscribe</button>
        </form>

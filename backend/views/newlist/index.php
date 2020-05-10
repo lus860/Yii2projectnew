@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attribute'=>'category',
             'format' => 'ntext',
             'value' => function( $data ){
-                return $data->getCategories()->one()->name;
+                return $data->categories->name;
            },
            ],
             'title',

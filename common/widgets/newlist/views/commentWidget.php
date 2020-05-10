@@ -48,7 +48,7 @@ use yii\widgets\ActiveForm;
                         <div class="comment-meta">
                             <a href="#" class="comment-date"><?=$child->date?></a>
                             <h6><?=$child->user_name?></h6>
-                            <small>For <?=$child->parent_name?></small>
+                            <small style="color: #db4437">For <?=$child->parent_name?></small>
                             <p><?=$child->text?></p>
                             <div class="d-flex align-items-center">
                                 <a href="#" class="like" data-id="<?=$child->parent_id?>" data-parent="<?=$child->id?>">like</a>

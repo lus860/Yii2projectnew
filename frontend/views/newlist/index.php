@@ -1,7 +1,11 @@
 <?php
+
+
 use yii\helpers\Html;
 use common\widgets\newlist\NewsWidget;
 use common\widgets\newlist\NewsletterWidget;
+
+//print_r(Yii::$app()->db->createCommand("SELECT `name` FROM `sys.tables`"));die;
 ?>
     <!-- ##### Hero Area Start ##### -->
     <section class="hero--area section-padding-80">
@@ -10,7 +14,7 @@ use common\widgets\newlist\NewsletterWidget;
                 <div class="col-12 col-md-7 col-lg-8">
                     <div class="tab-content">
                         <?php foreach ($newlists as $newlist):?>
-                        <div class="tab-pane fade <?php if($newlist->id ==1){echo 'active show';}?>" id="<?='post-'.$newlist->id?>" role="tabpanel" aria-labelledby="<?='post-'.$newlist->id.'-tab'?>">
+                        <div class="tab-pane fade <?php if($newlist->id === $newlists[0]->id){echo 'active show';}?>" id="<?='post-'.$newlist->id?>" role="tabpanel" aria-labelledby="<?='post-'.$newlist->id.'-tab'?>">
                             <!-- Single Feature Post -->
                             <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/images/news/'.$newlist->id.'.jpg'?>);">
                                 <!-- Play Button -->
@@ -20,9 +24,9 @@ use common\widgets\newlist\NewsletterWidget;
                                 <!-- Post Content -->
                                 <div class="post-content">
                                     <a href="#" class="post-cata"><?=ucfirst($newlist->categoryName)?></a>
-                                    <?= Html::a("$newlist->title", ['newlist/single', 'id' => $newlist->id, 'category'=> $newlist->categoryName ], ['class' => 'post-title']) ?>
+                                    <?= Html::a("$newlist->title", ['newlist/single', 'id' => $newlist->id, 'category'=> $newlist->categoryName], ['class' => 'post-title']) ?>
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlist->getCountComment($newlist->id)?></a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlist->comment_count?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i><?=$newlist->views_count?></a>
                                         <?php if($newlist->getLikeIcone($newlist->id) == null){?>
                                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlist->id?>"><?=$newlist->likes_count?></i></a>
@@ -57,10 +61,10 @@ use common\widgets\newlist\NewsletterWidget;
                                     </div>
                                     <div class="post-content">
                                         <h6 class="post-title">
-                                            <?= $newlist->title; ?>
+                                            <?= $newlist->getShortText($newlist->title,"50"); ?>
                                         </h6>
                                         <div class="post-meta d-flex justify-content-between">
-                                            <span><i class="fa fa-comments-o" aria-hidden="true"><?=$newlist->getCountComment($newlist->id)?></i></span>
+                                            <span><i class="fa fa-comments-o" aria-hidden="true"><?=$newlist->comment_count?></i></span>
                                             <span><i class="fa fa-eye" aria-hidden="true"><?=$newlist->views_count?></i></span>
                                             <?php if($newlist->getLikeIcone($newlist->id) == null){?>
                                             <span><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlist->id?>"><?=$newlist->likes_count?></i></span>
@@ -104,17 +108,19 @@ use common\widgets\newlist\NewsletterWidget;
 
                             <!-- Video Duration -->
                             <span class="video-duration">
-                                <?= Html::a($newviwe->video_time, ['newlist/video', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName ], ['class' => 'post-title']) ?>
+                                <?= Html::a($newviwe->video_time, ['newlist/video', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName], ['class' => 'post-title']) ?>
 
                             </span>
                         </div>
 
                         <!-- Post Content -->
                         <div class="post-content">
-                            <?= Html::a("$newviwe->categoryName", ['newlist/grid', 'category'=> $newviwe->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
-                            <?= Html::a("$newviwe->title", ['newlist/single', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName ], ['class' => 'post-title']) ?>
+
+
+                            <?= Html::a("$newviwe->categoryName", ['newlist/grid', 'category'=> $newviwe->categoryName], ['class' => 'post-cata cata-sm cata-success']) ?>
+                            <?= Html::a($newviwe->getShortText($newviwe->title,"80"), ['newlist/single', 'id' => $newviwe->id, 'category'=> $newviwe->categoryName], ['class' => 'post-title']) ?>
                             <div class="post-meta d-flex">
-                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newviwe->getCountComment($newviwe->id)?></a>
+                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newviwe->comment_count?></a>
                                 <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newviwe->views_count?></a>
                                 <?php if($newviwe->getLikeIcone($newviwe->id) == null){?>
                                 <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newviwe->id?>"><?=$newviwe->likes_count?></i></a>
@@ -154,13 +160,13 @@ use common\widgets\newlist\NewsletterWidget;
                             <?php foreach ($newlikes as $newlike) :?>
                             <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/images/news/'.$newlike->id.'.jpg'?>);">
                                 <!-- Play Button -->
-                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newlist->id, 'category'=> $newlist->categoryName ], ['class' => 'btn play-btn']) ?>
+                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newlist->id, 'category'=> $newlist->categoryName], ['class' => 'btn play-btn']) ?>
                                 <!-- Post Content -->
                                 <div class="post-content">
-                                    <?= Html::a("$newlike->categoryName", ['newlist/grid', 'category'=> $newlike->categoryName ], ['class' => 'post-cata']) ?>
-                                    <?= Html::a("$newlike->title", ['newlist/single', 'id' => $newlike->id, 'category'=> $newlike->categoryName ], ['class' => 'post-title']) ?>
+                                    <?= Html::a("$newlike->categoryName", ['newlist/grid', 'category'=> $newlike->categoryName], ['class' => 'post-cata']) ?>
+                                    <?= Html::a("$newlike->title", ['newlist/single', 'id' => $newlike->id, 'category'=> $newlike->categoryName], ['class' => 'post-title']) ?>
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlike->getCountComment($newlike->id)?></a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newlike->comment_count?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newlike->views_count?></a>
                                         <?php if($newlike->getLikeIcone($newlike->id) == null){?>
                                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newlike->id?>"><?=$newlike->likes_count?></i></a>
@@ -176,7 +182,7 @@ use common\widgets\newlist\NewsletterWidget;
                                 </div>
                                 <!-- Video Duration -->
                                 <span class="video-duration">
-                                    <?= Html::a($newlike->video_time, ['newlist/video', 'id' => $newlike->id, 'category'=> $newlike->categoryName ], ['class' => 'post-title']) ?>
+                                    <?= Html::a($newlike->video_time, ['newlist/video', 'id' => $newlike->id, 'category'=> $newlike->categoryName], ['class' => 'post-title']) ?>
                                 </span>
                             </div>
                             <?php endforeach;?>
@@ -203,16 +209,16 @@ use common\widgets\newlist\NewsletterWidget;
 
                                             <!-- Video Duration -->
                                             <span class ="video-duration">
-                                                <?= Html::a($new->video_time, ['newlist/video', 'id' => $new->id, 'category'=> $new->categoryName ], ['class' => 'post-title']) ?>
+                                                <?= Html::a($new->video_time, ['newlist/video', 'id' => $new->id, 'category'=> $categorlist->name], ['class' => 'post-title']) ?>
                                             </span>
                                         </div>
 
                                         <!-- Post Content -->
                                         <div class="post-content">
-                                            <?= Html::a("$new->categoryName", ['newlist/grid', 'category'=> $new->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
-                                            <?= Html::a("$new->title", ['newlist/single', 'id' => $new->id, 'category'=> $new->categoryName ], ['class' => 'post-title']) ?>
+                                            <?= Html::a("$categorlist->name", ['newlist/grid', 'category'=> $categorlist->name], ['class' => 'post-cata cata-sm cata-success']) ?>
+                                            <?= Html::a($new->getShortText($new->title,"80"), ['newlist/single', 'id' => $new->id, 'category'=> $categorlist->name], ['class' => 'post-title']) ?>
                                             <div class="post-meta d-flex">
-                                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$new->getCountComment($new->id)?></a>
+                                                <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$new->comment_count?></a>
                                                 <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$new->views_count?></a>
                                                 <?php if($new->getLikeIcone($new->id) == null){?>
                                                     <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$new->id?>"><?=$new->likes_count?></i></a>
@@ -247,14 +253,14 @@ use common\widgets\newlist\NewsletterWidget;
                             <?php foreach ($newtimes as $newtime):?>
                             <div class="single-feature-post video-post bg-img" style="background-image: url(<?='/images/news/'.$newtime->id.'.jpg' ?>);">
                                 <!-- Play Button -->
-                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'btn play-btn']) ?>
+                                <?= Html::a("<i class=\"fa fa-play\" aria-hidden=\"true\"></i>", ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName], ['class' => 'btn play-btn']) ?>
                                 <!-- Post Content -->
                                 <div class="post-content">
-                                    <?= Html::a("$newtime->categoryName", ['newlist/grid', 'category'=> $newtime->categoryName  ], ['class' => 'post-cata ']) ?>
-                                    <?= Html::a("$newtime->title", ['newlist/single', 'id' => $newtime->id, 'category'=> $newtime->categoryName  ], ['class' => 'post-title ']) ?>
+                                    <?= Html::a("$newtime->categoryName", ['newlist/grid', 'category'=> $newtime->categoryName], ['class' => 'post-cata ']) ?>
+                                    <?= Html::a("$newtime->title", ['newlist/single', 'id' => $newtime->id, 'category'=> $newtime->categoryName], ['class' => 'post-title ']) ?>
 
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newtime->getCountComment($newtime->id)?></a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newtime->comment_count?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newtime->views_count?></a>
                                         <?php if($newtime->getLikeIcone($newtime->id) == null){?>
                                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newtime->id?>"><?=$newtime->likes_count?></i></a>
@@ -271,7 +277,7 @@ use common\widgets\newlist\NewsletterWidget;
 
                                 <!-- Video Duration -->
                                 <span class="video-duration">
-                                         <?= Html::a($newtime->video_time, ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title']) ?>
+                                         <?= Html::a($newtime->video_time, ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName], ['class' => 'post-title']) ?>
                                 </span>
                             </div>
                             <?php endforeach;?>
@@ -288,15 +294,15 @@ use common\widgets\newlist\NewsletterWidget;
 
                                         <!-- Video Duration -->
                                         <span class="video-duration">
-                                           <?= Html::a($newtime->video_time, ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title']) ?>
+                                           <?= Html::a($newtime->video_time, ['newlist/video', 'id' => $newtime->id, 'category'=> $newtime->categoryName], ['class' => 'post-title']) ?>
                                         </span>
                                     </div>
                                 </div>
                                 <div class="col-12 col-lg-6">
                                     <!-- Post Content -->
                                     <div class="post-content mt-0">
-                                        <?= Html::a("$newtime->categoryName", ['newlist/grid', 'category'=> $newtime->categoryName ], ['class' => 'post-cata cata-sm cata-success']) ?>
-                                        <?= Html::a("$newtime->title", ['newlist/single', 'id' => $newtime->id, 'category'=> $newtime->categoryName ], ['class' => 'post-title mb-2']) ?>
+                                        <?= Html::a("$newtime->categoryName", ['newlist/grid', 'category'=> $newtime->categoryName], ['class' => 'post-cata cata-sm cata-success']) ?>
+                                        <?= Html::a($newtime->getShortText($newtime->title,"100"), ['newlist/single', 'id' => $newtime->id, 'category'=> $newtime->categoryName], ['class' => 'post-title mb-2']) ?>
 
                                         <div class="post-meta d-flex align-items-center mb-2">
                                             <a href="#" class="post-author">Added</a>
@@ -305,7 +311,7 @@ use common\widgets\newlist\NewsletterWidget;
                                         </div>
                                         <p class="mb-2"><?=$newtime->getShortText($newtime->content,100)?></p>
                                         <div class="post-meta d-flex">
-                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newtime->getCountComment($newtime->id)?></a>
+                                            <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$newtime->comment_count?></a>
                                             <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$newtime->views_count?></a>
                                             <?php if($newtime->getLikeIcone($newtime->id) == null){?>
                                                 <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$newtime->id?>"><?=$newtime->likes_count?></i></a>

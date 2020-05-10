@@ -19,7 +19,6 @@ class NewsletterWidget extends Widget
 
     public function run()
     {
-
         $newsletter = new NewsletteresForm();
         $categories = Category::find()->all();
         if (!Yii::$app->user->isGuest) {

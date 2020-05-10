@@ -45,18 +45,18 @@ AppAsset::register($this);
 
                                     <!-- Video Duration -->
                                     <span class="video-duration">
-                                        <?= Html::a($new->video_time, ['newlist/video', 'id' => $new->id, 'category'=> $category ], ['class' => 'post-title']) ?>
+                                        <?= Html::a($new->video_time, ['newlist/video', 'id' => $new->id, 'category'=> $model->name ], ['class' => 'post-title']) ?>
                                     </span>
                                 </div>
 
                                 <!-- Post Content -->
                                 <div class="post-content">
-                                    <?= Html::a("$category", ['newlist/grid',  'category'=> $category ], ['class' => 'post-cata cata-sm cata-success']) ?>
+                                    <?= Html::a("$model->name", ['newlist/grid',  'category'=> $model->name], ['class' => 'post-cata cata-sm cata-success']) ?>
 
-                                    <?= Html::a("$new->title", ['newlist/single', 'id' => $new->id, 'category'=> $category ], ['class' => 'post-title']) ?>
+                                    <?= Html::a("$new->title", ['newlist/single', 'id' => $new->id, 'category'=> $model->name], ['class' => 'post-title']) ?>
 
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$new->getCountComment($new->id)?></a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$new->comment_count?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i><?=$new->views_count?></a>
                                         <?php if($new->getLikeIcone($new->id) == null){?>
                                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$new->id?>"><?=$new->likes_count?></i></a>

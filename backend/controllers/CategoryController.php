@@ -41,7 +41,7 @@ class CategoryController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Category::find()->with("newlists"),
+            'query' => Category::find()->with(['newlists']),
         ]);
 
         return $this->render('index', [
@@ -123,7 +123,7 @@ class CategoryController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Category::findOne($id)) !== null) {
+        if (($model = Category::find()->with(['newlists'])->where(['id' => $id])->one()) !== null) {
             return $model;
         }
 

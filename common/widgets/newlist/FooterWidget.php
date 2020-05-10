@@ -18,8 +18,8 @@ class FooterWidget extends Widget
     public function run()
     {
         $count = Category::find()->count();
-        $category = Category::findOne(rand(1,$count));
-        $newlist = $category->getNewlists()->with("categories")->limit(2)->all();
+        $category = Category::find()->with(['newlist'])->where(['id' => rand(1,$count)])->one();
+        $newlist = $category->getNewlists()->limit(2)->all();
         return $this->render('footerWidget',[
             'footerwidget' => $newlist,
             'namewidget' => $category->name,

@@ -23,7 +23,7 @@ class SearchForm extends Model
     public static function Search($keyword){
 
         if ( $keyword) {
-            return  Newlist::find()->Where(['LIKE', 'title', $keyword])->all();
+            return  Newlist::find()->with(['categories'])->where(['LIKE', 'title', $keyword])->all();
 
         }
         return false;

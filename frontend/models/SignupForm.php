@@ -44,6 +44,18 @@ class SignupForm extends Model
         ];
     }
 
+    public function beforeValidate()
+    {
+        //strip_tags() -- Удаляет HTML и PHP тэги из
+        $this->email = Html::encode($this->email);
+        $this->name = Html::encode($this->name);
+        $this->surname = Html::encode($this->surname);
+        $this->password = Html::encode($this->password);
+        $this->password = Html::encode($this->passwordRepeat);
+
+        return parent::beforeValidate();
+    }
+
     /**
      * @return User | null
      * @throws \yii\base\Exception

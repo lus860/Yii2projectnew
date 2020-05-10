@@ -27,8 +27,11 @@ class CommentWidget extends Widget
             $commentForm->load(Yii::$app->request->post());
             if($commentForm->saveComment($this->new_id))
             {
+                $newlist = Newlist::findOne($this->new_id);
+                $newlist->comment_count++;
+                $newlist->save(false);
                 Yii::$app->getSession()->setFlash('comment', 'Your comment will be added soon!');
-                 Yii::$app->controller->refresh();
+                Yii::$app->controller->refresh();
                 return;
             }
         }

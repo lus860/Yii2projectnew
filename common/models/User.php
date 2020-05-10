@@ -103,7 +103,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getStatusName()
     {
-        $list=[];
+        $list = [];
         $list[self::STATUS_INACTIVE] = self::IS_ACTIVE[0];
         $list[self::STATUS_ACTIVE] = self::IS_ACTIVE[1];
         return $list[$this->status];
@@ -289,30 +289,30 @@ class User extends ActiveRecord implements IdentityInterface
 
     }
 
-    public static function LoginAdmin($id)
-    {
-        Yii::$app->urlManager->baseUrl = '/';
-
-        $authKey = Yii::$app->user->identity->authKey;
-        User::Logout();
-        //Yii::$app->user->logout();
-        $user = User::findOne($id);
-        Yii::$app->user->login($user, 3600 * 24 * 30);
-
-        if (User::userConfirmed()) {
-            $authCookie = new \yii\web\Cookie
-            ([
-                'name' => 'from_admin',
-                'value' => $authKey,
-                'expire' => time() + 86400 * 365,
-            ]);
-
-            Yii::$app->getResponse()->getCookies()->add($authCookie);
-            return Yii::$app->controller->redirect(['/newlist/']);
-        } else {
-            return Yii::$app->controller->redirect(Yii::$app->request->referrer ?? Yii::$app->homeUrl);
-        }
-    }
+//    public static function LoginAdmin($id)
+//    {
+//        Yii::$app->urlManager->baseUrl = '/';
+//
+//        $authKey = Yii::$app->user->identity->authKey;
+//        User::Logout();
+//        //Yii::$app->user->logout();
+//        $user = User::findOne($id);
+//        Yii::$app->user->login($user, 3600 * 24 * 30);
+//
+//        if (User::userConfirmed()) {
+//            $authCookie = new \yii\web\Cookie
+//            ([
+//                'name' => 'from_admin',
+//                'value' => $authKey,
+//                'expire' => time() + 86400 * 365,
+//            ]);
+//
+//            Yii::$app->getResponse()->getCookies()->add($authCookie);
+//            return Yii::$app->controller->redirect(['/newlist/']);
+//        } else {
+//            return Yii::$app->controller->redirect(Yii::$app->request->referrer ?? Yii::$app->homeUrl);
+//        }
+//    }
 
     public function getDate($date)
     {

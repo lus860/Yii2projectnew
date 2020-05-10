@@ -18,9 +18,12 @@ class PrevNextWidget extends Widget
 
     public function run()
     {
+        $prev = $this->model->prev;
+        $next = $this->model->next;
 
         return $this->render('prevNextWidget',[
-            'model' => $this->model,
+            'prev' => $prev,
+            'next' => $next,
         ]);
 
     }

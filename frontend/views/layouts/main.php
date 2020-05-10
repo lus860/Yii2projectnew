@@ -136,7 +136,7 @@ VizewAsset::register($this);
     </div>
 </header>
 <?php if(Yii::$app->session->getFlash('isguest')):?>
-    <div class="alert alert-danger" role="alert">
+    <div class="container alert alert-danger w-50 text-center" role="alert">
         <?= Yii::$app->session->getFlash('isguest'); ?>
     </div>
 <?php endif;?>

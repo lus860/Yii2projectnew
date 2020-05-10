@@ -31,7 +31,7 @@ $title = $model->title;
                             <!-- Post Content -->
                             <div class="post-content mt-0">
                                 <?= Html::a("$model->categoryName", ['newlist/grid',  'category'=> $model->categoryName], ['class' => 'post-cata cata-sm cata-danger']) ?>
-                                <?= Html::a("$model->title", ['newlist/single', 'id' => $model->id, 'category'=> $model->categoryName  ], ['class' => 'post-title mb-2']) ?>
+                                <?= Html::a("$model->title", ['newlist/single', 'id' => $model->id, 'category'=> $model->categoryName], ['class' => 'post-title mb-2']) ?>
                                 <div class="d-flex justify-content-between mb-30">
                                     <div class="post-meta d-flex align-items-center">
                                         <a href="#" class="post-author">Added</a>
@@ -39,7 +39,7 @@ $title = $model->title;
                                         <a href="#" class="post-date"><?=$model->created_at?></a>
                                     </div>
                                     <div class="post-meta d-flex">
-                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$model->getCountComment($model->id)?></a>
+                                        <a href="#"><i class="fa fa-comments-o" aria-hidden="true"></i><?=$model->comment_count?></a>
                                         <a href="#"><i class="fa fa-eye" aria-hidden="true"></i> <?=$model->views_count?></a>
                                         <?php if($model->getLikeIcone($model->id) == null){?>
                                             <a href="#"><i class="fa fa-thumbs-o-up like" aria-hidden="true" data-id="<?=$model->id?>"><?=$model->likes_count?></i></a>
